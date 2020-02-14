@@ -1,0 +1,21 @@
+
+body {
+    background-color: olivedrab;
+}
+
+.nav {
+    background-color: navy;
+    color: papayawhip;
+
+
+}
+
+nav a{
+    position: absolute;
+    left: 0px;
+}
+
+nav p {
+    position: absolute;
+    right: 0px;
+}
