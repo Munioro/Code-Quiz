@@ -1,5 +1,17 @@
 //set global variables
 var docBod = document.body;
+var timeLeft = document.createElement('p');
+var list = document.createElement('ul');
+    var navElm = document.createElement('nav');
+    var createH1 = document.createElement("h1");
+    var createA = document.createElement('a');
+    var h1Quest = document.createElement('h1');
+    //var pAnwers = document.createElement('p');
+    var pRa = document.createElement('p');
+
+
+var timeRemaining;
+var seconds = 100;
 var count = 0;
 var data = [
     {
@@ -56,17 +68,14 @@ var data = [
 
 
 onLoadFunction()
-
 //function definitions
 function onLoadFunction() {
-    var navElm = document.createElement('nav');
-    var createH1 = document.createElement("h1");
-    var createA = document.createElement('a');
-    var timeLeft = document.createElement('p');
+    timeInterval();
+    
+
 
     createA.innerText = "View Highscore";
     createH1.innerText = "Code Quiz";
-    timeLeft.innerText = " seconds left";
 
     navElm.setAttribute('class', 'nav justify-content-center');
     createA.setAttribute("href", "#");
@@ -80,10 +89,6 @@ function onLoadFunction() {
 }
 
 function QuestionRotation(){
-    //var getDiv = document.querySelector('div');
-    var h1Quest = document.createElement('h1');
-    //var pAnwers = document.createElement('p');
-    var pRa = document.createElement('p');
     var currentData = data[count];
     var list = document.createElement('ul');
     var div1 = document.createElement('div');
@@ -91,7 +96,7 @@ function QuestionRotation(){
 
     // var options;
     var rightAnswer = currentData.ra;
-
+    
     div1.setAttribute('class', 'container');
 
 
@@ -130,18 +135,65 @@ function QuestionRotation(){
             console.log(rightAnswer);
             pRa.innerText = "Correct!";
             div1.appendChild(pRa);
-            setTimeout('', 5000);
-            div1.remove();
-            
-            return QuestionRotation();
+            setTimeout(function (){clearDiv(), QuestionRotation()}, 1000);
                 
         }else {
             pRa.innerText = "Incorrect";
-            
+            seconds -= 10;
+            console.log(seconds);
             div1.appendChild(pRa);
             console.log(this)
-            
+            setTimeout(function (){clearDiv(), QuestionRotation()}, 1000);
         }
+
     });
 console.log(count)
+}
+
+function clearDiv(){ 
+    var getDiv = document.querySelector('div');
+
+    getDiv.remove();
+            
+    //return QuestionRotation();
+    
+}
+
+
+function timeInterval(){
+        timeRemaining = setInterval(() => {
+        seconds --;
+
+        timeLeft.innerText = seconds +" seconds left";
+
+
+        if(seconds <= 0){
+            clearInterval(timeRemaining);
+            clearDiv();
+            youLose();
+        }
+        
+    }, 1000);
+}
+function youLose(){
+    
+    var losePage = document.createElement('div');
+    var loseH1 = document.createElement('h1');
+    var loseP = document.createElement('p');
+    var tryAgain = document.createElement('button');
+
+
+    loseH1.innerText = "Sorry, you lose!";
+    loseP.innerHTML = "Brush up on the content then try again later";
+    tryAgain.innerText = "Try Again";
+
+    docBod.appendChild(losePage)
+    losePage.appendChild(loseH1);
+    losePage.appendChild(loseP);
+    losePage.appendChild(tryAgain);
+
+    tryAgain.addEventListener('click', () => {clearDiv(); count=0;seconds=100; QuestionRotation();timeInterval();});
+
+
+
 }
