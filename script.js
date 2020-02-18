@@ -11,6 +11,7 @@ var list = document.createElement('ul');
 
 
 var timeRemaining;
+var Highscores = [];
 var seconds = 100;
 var count = 0;
 var data = [
@@ -24,7 +25,7 @@ var data = [
         answers : ["head", "body", "style", "script"],
         ra : "head"
     },
-    {
+    /*{
         question : "Where should you place a reference to a JavaScript file?",
         answers : ["head", "body", "style", "script"],
         ra : "script"
@@ -63,11 +64,45 @@ var data = [
         question : "what does DOM stand for?",
         answers : ["Document Object Model", "Document Orientation Method", "Document Object Method", "Document Orientation Model"],
         ra : "Document Object Model",
-    }
+    }*/
 ];
 
 
 onLoadFunction()
+
+createA.addEventListener('click', function(){
+    clearInterval(timeRemaining);
+    clearDiv();
+
+    var storedScores = JSON.parse(localStorage.getItem('Highscores'));
+    var divHS = document.createElement('div');
+    var listHS = document.createElement('ol');
+    var startQuiz = document.createElement('button');
+
+    if (storedScores !== null){
+        Highscores = storedScores;
+    }
+    startQuiz.innerText = "Start Quiz";
+
+
+    docBod.appendChild(divHS);
+    divHS.appendChild(listHS);
+    divHS.appendChild(startQuiz);
+
+    startQuiz.addEventListener('click', () => {clearDiv(); count=0;seconds=100; QuestionRotation();timeInterval();});
+
+
+    for(var i = 0; i < Highscores.length; i++){
+        var highScr = document.createElement('li');
+
+
+        highScr.innerText = Highscores[i];
+
+        listHS.appendChild(highScr);
+
+    }
+
+})
 //function definitions
 function onLoadFunction() {
     timeInterval();
@@ -78,7 +113,7 @@ function onLoadFunction() {
     createH1.innerText = "Code Quiz";
 
     navElm.setAttribute('class', 'nav justify-content-center');
-    createA.setAttribute("href", "#");
+    createA.setAttribute("href", "#view-highscore");
 
     docBod.appendChild(navElm);
     navElm.appendChild(createA);
@@ -135,7 +170,13 @@ function QuestionRotation(){
             console.log(rightAnswer);
             pRa.innerText = "Correct!";
             div1.appendChild(pRa);
+            if(count !== data.length - 1){
             setTimeout(function (){clearDiv(), QuestionRotation()}, 1000);
+            }else {
+                clearInterval(timeRemaining);
+                enterHighscore();
+            }
+            
                 
         }else {
             pRa.innerText = "Incorrect";
@@ -195,5 +236,55 @@ function youLose(){
     tryAgain.addEventListener('click', () => {clearDiv(); count=0;seconds=100; QuestionRotation();timeInterval();});
 
 
+
+}
+//create form when quiz is over
+//save form to memory
+//save fun
+//add event listner to view highscore link
+//attatch clear div event
+function enterHighscore(){
+        var divForm = document.createElement('div');
+        var formHS = document.createElement('form');
+        var labelName = document.createElement('label');
+        var inputName = document.createElement('input');
+        clearDiv();
+
+
+
+        labelName.setAttribute('for', 'name');
+        inputName.setAttribute('id', 'name');
+        inputName.setAttribute('type', 'text');
+        inputName.setAttribute('name', 'name');
+
+        labelName.innerText = "Enter Name";
+
+
+        docBod.appendChild(divForm);
+        divForm.appendChild(formHS);
+        formHS.appendChild(labelName);
+        formHS.appendChild(inputName);
+
+        formHS.addEventListener('submit', function (event) {
+            event.preventDefault();
+            
+            var inputText = inputName.value.trim();
+            var score = inputText + ' ' + seconds;
+
+
+            Highscores.push(score);
+            Highscores.sort(function (a, b){return b - a});
+            localStorage.setItem('highscores', JSON.stringify(Highscores));
+            console.log(Highscores);
+            console.log(localStorage);
+
+            clearDiv();
+            count = 0;
+            seconds = 100
+            QuestionRotation();
+            timeInterval();
+            
+
+        })
 
 }
